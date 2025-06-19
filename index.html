@@ -3,104 +3,67 @@
 <head>
     <title>Bubbles' Credit Dash</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #2A5CAA; font-family: Arial; }
-        #game { height: 100vh; position: relative; }
-        #bubbles { 
-            width: 80px; height: 80px; background: #F9D71C; 
-            position: absolute; bottom: 100px; left: 50px; border-radius: 50%;
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #2A5CAA url('joburg-bg.png') no-repeat bottom;
+            background-size: cover;
+            font-family: Arial;
         }
-        .obstacle { 
-            width: 40px; height: 80px; background: red; 
-            position: absolute; bottom: 100px; right: 0; 
+        #game { 
+            height: 100vh; 
+            position: relative; 
         }
-        #score { position: absolute; top: 20px; left: 20px; color: white; }
-        #consent {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 20px; text-align: center; border-radius: 10px;
+        #bubbles {
+            width: 80px;
+            height: 80px;
+            background: url('meerkat.png') no-repeat;
+            position: absolute;
+            bottom: 100px;
+            left: 50px;
+            transition: transform 0.1s;
         }
+        .debt {
+            width: 40px;
+            height: 90px;
+            background: red url('debt-icon.png') center no-repeat;
+            position: absolute;
+            bottom: 100px;
+            right: 0;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+        /* ... (other existing styles) ... */
     </style>
 </head>
 <body>
+    <!-- Consent Popup (Will Add T&Cs) -->
+    <div id="consent">
+        <h2>Welcome to Credit Hero!</h2>
+        <p>By playing, you agree to receive financial tips</p>
+        <button id="start-btn">I AGREE</button>
+    </div>
+
     <div id="game">
         <div id="bubbles"></div>
-        <div id="score">Score: 0</div>
-        <div id="consent">
-            <h3>Welcome!</h3>
-            <p>Play to improve your credit score knowledge!</p>
-            <button onclick="startGame()">I AGREE</button>
-        </div>
+        <div id="score">Credit Score: 0</div>
     </div>
 
     <script>
-        let score = 0;
-        let gameSpeed = 5;
-        let isJumping = false;
+        // Enhanced game logic
+        let creditScore = 0;
         const bubbles = document.getElementById('bubbles');
-        const consent = document.getElementById('consent');
-
-        function startGame() {
-            consent.style.display = 'none';
-            setInterval(createObstacle, 2000);
-            setInterval(updateGame, 20);
-        }
-
+        
         function jump() {
-            if (isJumping) return;
-            isJumping = true;
-            let jumpHeight = 0;
-            const jumpInterval = setInterval(() => {
-                jumpHeight += 5;
-                bubbles.style.bottom = (100 + jumpHeight) + 'px';
-                if (jumpHeight > 100) {
-                    clearInterval(jumpInterval);
-                    const fallInterval = setInterval(() => {
-                        jumpHeight -= 5;
-                        bubbles.style.bottom = (100 + jumpHeight) + 'px';
-                        if (jumpHeight <= 0) {
-                            clearInterval(fallInterval);
-                            isJumping = false;
-                        }
-                    }, 20);
-                }
-            }, 20);
+            // Add meerkat jump animation
+            bubbles.style.transform = 'translateY(-100px)';
+            setTimeout(() => {
+                bubbles.style.transform = 'translateY(0)';
+            }, 500);
         }
-
-        function createObstacle() {
-            const obstacle = document.createElement('div');
-            obstacle.className = 'obstacle';
-            document.getElementById('game').appendChild(obstacle);
-            moveObstacle(obstacle);
-        }
-
-        function moveObstacle(obstacle) {
-            let pos = 0;
-            const moveInterval = setInterval(() => {
-                pos += gameSpeed;
-                obstacle.style.right = pos + 'px';
-                
-                // Collision detection
-                if (pos > window.innerWidth - 150 && pos < window.innerWidth - 50 && 
-                    parseInt(bubbles.style.bottom) < 140) {
-                    alert(`Game Over! Score: ${score}`);
-                    location.reload();
-                }
-                
-                if (pos > window.innerWidth) {
-                    clearInterval(moveInterval);
-                    obstacle.remove();
-                }
-            }, 20);
-        }
-
-        function updateGame() {
-            score++;
-            document.getElementById('score').textContent = `Score: ${score}`;
-            if (score % 100 === 0) gameSpeed += 0.5;
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') jump();
-        });
+        
+        // ... (rest of your existing game code) ...
     </script>
 </body>
 </html>
